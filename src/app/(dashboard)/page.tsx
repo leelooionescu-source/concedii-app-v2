@@ -53,7 +53,7 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <StatCard icon={<Users className="h-5 w-5 text-blue-600" />} label="Angajati activi" value={angajati.length} />
+        <StatCard icon={<Users className="h-5 w-5 text-blue-600" />} label="Echipa PA" value={angajati.length} />
         <StatCard icon={<CalendarDays className="h-5 w-5 text-purple-600" />} label="In concediu azi" value={inConcediu.length} />
         <StatCard icon={<AlertTriangle className="h-5 w-5 text-orange-500" />} label="Sold CO scazut" value={lowBalance} />
         <StatCard icon={<CalendarDays className="h-5 w-5 text-green-600" />} label={`Total concedii ${an}`} value={concedii.length} />

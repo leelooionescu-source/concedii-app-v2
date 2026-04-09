@@ -154,7 +154,7 @@ export default function AngajatiPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title"><Users className="h-5 w-5" /> Angajati</h1>
+        <h1 className="page-title"><Users className="h-5 w-5" /> Echipa PA</h1>
         <div className="flex gap-2">
           <button className="btn-add" onClick={() => importRef.current?.click()}>
             <Upload className="h-4 w-4" /> Import zile nastere

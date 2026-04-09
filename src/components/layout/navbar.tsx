@@ -9,7 +9,7 @@ import {
 
 const navItems = [
   { href: "/", label: "Panou", icon: LayoutDashboard },
-  { href: "/angajati", label: "Angajati", icon: Users },
+  { href: "/angajati", label: "Echipa PA", icon: Users },
   { href: "/concedii", label: "Concedii", icon: CalendarDays },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/sarbatori", label: "Sarbatori", icon: Star },
