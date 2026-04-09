@@ -4,6 +4,7 @@ export interface Angajat {
   prenume: string;
   departament: string;
   data_angajare: string | null;
+  data_nastere: string | null;
   zile_co_an: number;
   activ: boolean;
   created_at?: string;

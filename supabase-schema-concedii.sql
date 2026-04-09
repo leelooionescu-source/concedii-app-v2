@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS angajati (
   prenume TEXT NOT NULL,
   departament TEXT DEFAULT '',
   data_angajare DATE,
+  data_nastere DATE,
   zile_co_an INTEGER DEFAULT 21,
   activ BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now(),

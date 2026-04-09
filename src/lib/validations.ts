@@ -12,6 +12,7 @@ export const angajatSchema = z.object({
   departament: z.string().max(100, "Departamentul nu poate depasi 100 caractere").optional().or(z.literal("")),
   zile_co_an: z.number().min(1, "Minim 1 zi").max(50, "Maxim 50 zile"),
   data_angajare: z.string().optional().or(z.literal("")),
+  data_nastere: z.string().optional().or(z.literal("")),
   activ: z.boolean(),
 });
 

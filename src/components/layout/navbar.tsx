@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
-  LayoutDashboard, Users, CalendarDays, Calendar, Star, Menu, X,
+  LayoutDashboard, Users, CalendarDays, Calendar, Star, Menu, X, Bell,
 } from "lucide-react";
 
 const navItems = [
@@ -52,6 +52,9 @@ export function Navbar() {
 
         <div className="flex-1" />
 
+        {/* Notifications bell */}
+        <NotificationBell />
+
         {/* Mobile hamburger */}
         <button
           className="md:hidden text-white p-1"
@@ -88,5 +91,66 @@ export function Navbar() {
         </div>
       )}
     </>
+  );
+}
+
+function NotificationBell() {
+  const [notifs, setNotifs] = useState<{ title: string; body: string; type: string }[]>([]);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("/api/notifications")
+      .then((r) => r.json())
+      .then((data) => setNotifs(data || []))
+      .catch(() => {});
+  }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const typeIcon: Record<string, string> = {
+    birthday: "🎂",
+    concediu: "🏖️",
+    sold: "⚠️",
+  };
+
+  return (
+    <div ref={ref} className="relative mr-2">
+      <button onClick={() => setOpen(!open)} className="relative text-white/90 hover:text-white p-1">
+        <Bell className="h-5 w-5" />
+        {notifs.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+            {notifs.length}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-10 w-80 bg-white rounded-lg shadow-xl border z-50 max-h-96 overflow-y-auto">
+          <div className="p-3 border-b font-bold text-sm text-gray-700">
+            Notificari ({notifs.length})
+          </div>
+          {notifs.length === 0 ? (
+            <div className="p-4 text-center text-gray-400 text-sm">Nicio notificare</div>
+          ) : (
+            notifs.map((n, i) => (
+              <div key={i} className="px-3 py-2 border-b last:border-0 hover:bg-gray-50">
+                <div className="text-xs font-semibold text-gray-700">
+                  {typeIcon[n.type] || "📋"} {n.title}
+                </div>
+                <div className="text-xs text-gray-500">{n.body}</div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
   );
 }

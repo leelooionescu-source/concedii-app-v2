@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Users, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Users, Plus, Pencil, Trash2, Search, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,14 @@ const emptyForm = {
   departament: "",
   zile_co_an: 21,
   data_angajare: "",
+  data_nastere: "",
   activ: true,
+};
+
+const LUNI_RO: Record<string, string> = {
+  ianuarie: "01", februarie: "02", martie: "03", aprilie: "04",
+  mai: "05", iunie: "06", iulie: "07", august: "08",
+  septembrie: "09", octombrie: "10", noiembrie: "11", decembrie: "12",
 };
 
 export default function AngajatiPage() {
@@ -58,6 +65,7 @@ export default function AngajatiPage() {
       departament: a.departament || "",
       zile_co_an: a.zile_co_an,
       data_angajare: a.data_angajare || "",
+      data_nastere: a.data_nastere || "",
       activ: a.activ,
     });
     setDialogOpen(true);
@@ -82,6 +90,58 @@ export default function AngajatiPage() {
     fetchData();
   }
 
+  const importRef = useRef<HTMLInputElement>(null);
+
+  async function handleImportBirthdays(file: File) {
+    const XLSX = (await import("xlsx")).default;
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: "array" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+
+    let updated = 0;
+    let notFound = 0;
+    const errors: string[] = [];
+
+    for (let i = 1; i < rows.length; i++) {
+      const persoana = String(rows[i][0] || "").trim();
+      const lunaRaw = String(rows[i][1] || "").trim().toLowerCase();
+      if (!persoana || !lunaRaw) continue;
+
+      // Parse "25 ianuarie" → "2000-01-25" (year doesn't matter, only month+day)
+      const m = lunaRaw.match(/^(\d{1,2})\s+(\w+)/);
+      if (!m) { errors.push(`Rand ${i + 1}: format invalid "${lunaRaw}"`); continue; }
+      const day = m[1].padStart(2, "0");
+      const monthStr = LUNI_RO[m[2]];
+      if (!monthStr) { errors.push(`Rand ${i + 1}: luna necunoscuta "${m[2]}"`); continue; }
+      const dateStr = `2000-${monthStr}-${day}`;
+
+      // Match by name (case-insensitive)
+      const parts = persoana.toUpperCase().split(/\s+/);
+      const match = angajati.find((a) => {
+        const numeUp = a.nume.toUpperCase();
+        const prenumeUp = a.prenume.toUpperCase();
+        return parts.some((p) => p === numeUp) && parts.some((p) => p === prenumeUp);
+      });
+
+      if (!match) {
+        notFound++;
+        errors.push(`Rand ${i + 1}: "${persoana}" negasit`);
+        continue;
+      }
+
+      const { error } = await supabase.from("angajati").update({ data_nastere: dateStr }).eq("id", match.id);
+      if (error) { errors.push(`Rand ${i + 1}: eroare DB pentru "${persoana}"`); continue; }
+      updated++;
+    }
+
+    fetchData();
+    toast.success(`Import finalizat: ${updated} actualizati, ${notFound} negasiti`);
+    if (errors.length > 0) {
+      console.log("Import errors:", errors);
+    }
+  }
+
   async function handleDelete(a: Angajat) {
     if (!confirm(`Stergi angajatul ${a.prenume} ${a.nume}? Toate concediile asociate vor fi sterse.`)) return;
     const { error } = await supabase.from("angajati").delete().eq("id", a.id);
@@ -95,7 +155,14 @@ export default function AngajatiPage() {
     <>
       <div className="page-header">
         <h1 className="page-title"><Users className="h-5 w-5" /> Angajati</h1>
-        <button className="btn-add" onClick={openCreate}><Plus className="h-4 w-4" /> Adauga</button>
+        <div className="flex gap-2">
+          <button className="btn-add" onClick={() => importRef.current?.click()}>
+            <Upload className="h-4 w-4" /> Import zile nastere
+          </button>
+          <input ref={importRef} type="file" accept=".xlsx,.xls" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImportBirthdays(f); e.target.value = ""; }} />
+          <button className="btn-add" onClick={openCreate}><Plus className="h-4 w-4" /> Adauga</button>
+        </div>
       </div>
 
       <div className="search-bar">
@@ -185,6 +252,10 @@ export default function AngajatiPage() {
                 <Label>Data angajare</Label>
                 <Input type="date" value={form.data_angajare} onChange={(e) => setForm({ ...form, data_angajare: e.target.value })} />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Data nastere</Label>
+              <Input type="date" value={form.data_nastere} onChange={(e) => setForm({ ...form, data_nastere: e.target.value })} />
             </div>
             {editId && (
               <div className="flex items-center gap-2">

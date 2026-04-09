@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { format } from "date-fns";
-import { Users, CalendarDays, AlertTriangle, Sun } from "lucide-react";
+import { format, differenceInDays, setYear } from "date-fns";
+import { Users, CalendarDays, AlertTriangle, Sun, Cake } from "lucide-react";
 import { TIP_BADGE_COLORS, TIPURI_CONCEDIU } from "@/lib/types";
 import type { Angajat, Concediu } from "@/lib/types";
 import Link from "next/link";
@@ -77,6 +77,45 @@ export default async function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Zile de nastere */}
+      {(() => {
+        const today = new Date();
+        const thisYear = today.getFullYear();
+        const upcoming = angajati
+          .filter((a) => a.data_nastere)
+          .map((a) => {
+            const bday = new Date(a.data_nastere!);
+            let nextBday = setYear(bday, thisYear);
+            if (nextBday < today && differenceInDays(today, nextBday) > 0) {
+              nextBday = setYear(bday, thisYear + 1);
+            }
+            const daysUntil = differenceInDays(nextBday, today);
+            return { angajat: a, nextBday, daysUntil, dayMonth: format(nextBday, "dd.MM") };
+          })
+          .filter((b) => b.daysUntil >= 0 && b.daysUntil <= 7)
+          .sort((a, b) => a.daysUntil - b.daysUntil);
+
+        if (upcoming.length === 0) return null;
+        return (
+          <div className="content-card mb-6">
+            <div className="p-4 border-b border-gray-200">
+              <h2 className="font-bold text-gray-700 flex items-center gap-2">
+                <Cake className="h-4 w-4 text-pink-500" /> Zile de nastere (urmatoarele 7 zile)
+              </h2>
+            </div>
+            <div className="p-4 flex flex-wrap gap-2">
+              {upcoming.map((b) => (
+                <span key={b.angajat.id} className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  b.daysUntil === 0 ? "bg-pink-500 text-white" : "bg-pink-100 text-pink-800"
+                }`}>
+                  {b.angajat.prenume} {b.angajat.nume} — {b.daysUntil === 0 ? "AZI!" : b.daysUntil === 1 ? "maine" : `${b.dayMonth} (${b.daysUntil} zile)`}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Sold zile CO */}
       <div className="content-card">
