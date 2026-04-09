@@ -183,6 +183,7 @@ export default function AngajatiPage() {
               <th>Nume</th>
               <th>Departament</th>
               <th>Data angajare</th>
+              <th>Data nastere</th>
               <th style={{ textAlign: "center" }}>Zile CO/an</th>
               <th style={{ textAlign: "center" }}>Status</th>
               <th style={{ textAlign: "center" }}>Actiuni</th>
@@ -190,9 +191,9 @@ export default function AngajatiPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} className="text-center py-8 text-gray-400">Se incarca...</td></tr>
+              <tr><td colSpan={9} className="text-center py-8 text-gray-400">Se incarca...</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={8} className="text-center py-8 text-gray-400">Niciun angajat gasit</td></tr>
+              <tr><td colSpan={9} className="text-center py-8 text-gray-400">Niciun angajat gasit</td></tr>
             ) : filtered.map((a, i) => (
               <tr key={a.id}>
                 <td className="col-nr">{i + 1}</td>
@@ -200,6 +201,7 @@ export default function AngajatiPage() {
                 <td className="col-bold">{a.nume}</td>
                 <td>{a.departament || "-"}</td>
                 <td>{a.data_angajare || "-"}</td>
+                <td>{a.data_nastere ? new Date(a.data_nastere).toLocaleDateString("ro-RO", { day: "2-digit", month: "long" }) : "-"}</td>
                 <td style={{ textAlign: "center" }}>{a.zile_co_an}</td>
                 <td style={{ textAlign: "center" }}>
                   <span className={a.activ ? "badge-activ" : "badge-suspendat"}>
