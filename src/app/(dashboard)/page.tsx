@@ -130,7 +130,6 @@ export default async function DashboardPage() {
             <tr>
               <th className="col-nr">#</th>
               <th>Angajat</th>
-              <th>Departament</th>
               <th style={{ textAlign: "center" }}>Total/an</th>
               <th style={{ textAlign: "center" }}>Consumat</th>
               <th style={{ textAlign: "center" }}>Ramas</th>
@@ -142,7 +141,6 @@ export default async function DashboardPage() {
               <tr key={s.angajat.id}>
                 <td className="col-nr">{i + 1}</td>
                 <td className="col-bold">{s.angajat.prenume} {s.angajat.nume}</td>
-                <td>{s.angajat.departament || "-"}</td>
                 <td style={{ textAlign: "center" }}>{s.total}</td>
                 <td style={{ textAlign: "center" }}>{s.consumat}</td>
                 <td style={{ textAlign: "center" }}>
@@ -165,7 +163,7 @@ export default async function DashboardPage() {
               </tr>
             ))}
             {solduri.length === 0 && (
-              <tr><td colSpan={7} className="text-center text-gray-400 py-8">Niciun angajat activ</td></tr>
+              <tr><td colSpan={6} className="text-center text-gray-400 py-8">Niciun angajat activ</td></tr>
             )}
           </tbody>
         </table>

@@ -14,6 +14,7 @@ import { logActivity } from "@/lib/activity-log";
 import { zileLucratoare } from "@/lib/holidays";
 import { TIPURI_CONCEDIU, TIP_BADGE_COLORS } from "@/lib/types";
 import type { Angajat, Concediu } from "@/lib/types";
+import { formatDateRO } from "@/lib/format";
 
 const emptyForm = {
   angajat_id: "",
@@ -52,7 +53,7 @@ function ConcediiContent() {
       .select("*, angajati(*)")
       .gte("data_start", `${anStr}-01-01`)
       .lte("data_start", `${anStr}-12-31`)
-      .order("data_start", { ascending: false });
+      .order("data_start", { ascending: true });
 
     if (filtruAngajat) query = query.eq("angajat_id", filtruAngajat);
     if (filtruTip) query = query.eq("tip", filtruTip);
@@ -193,8 +194,8 @@ function ConcediiContent() {
                     {c.tip}
                   </span>
                 </td>
-                <td>{c.data_start}</td>
-                <td>{c.data_sfarsit}</td>
+                <td>{formatDateRO(c.data_start)}</td>
+                <td>{formatDateRO(c.data_sfarsit)}</td>
                 <td style={{ textAlign: "center" }}>{c.zile_lucratoare}</td>
                 <td className="text-gray-500 text-xs">{c.observatii || "-"}</td>
                 <td style={{ textAlign: "center" }}>

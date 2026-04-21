@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import {
-  LayoutDashboard, Users, CalendarDays, Calendar, Star, Menu, X, Bell,
+  LayoutDashboard, Users, CalendarDays, Calendar, Star, Menu, X, Bell, BellOff, LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
+import { isPushSupported, getCurrentSubscription, enablePush, disablePush } from "@/lib/push-client";
 
 const navItems = [
   { href: "/", label: "Panou", icon: LayoutDashboard },
@@ -52,8 +54,14 @@ export function Navbar() {
 
         <div className="flex-1" />
 
+        {/* Push notification toggle */}
+        <PushToggle />
+
         {/* Notifications bell */}
         <NotificationBell />
+
+        {/* Logout */}
+        <LogoutButton />
 
         {/* Mobile hamburger */}
         <button
@@ -91,6 +99,70 @@ export function Navbar() {
         </div>
       )}
     </>
+  );
+}
+
+function PushToggle() {
+  const [enabled, setEnabled] = useState(false);
+  const [supported, setSupported] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!isPushSupported()) { setSupported(false); return; }
+    getCurrentSubscription().then((s) => setEnabled(!!s));
+  }, []);
+
+  if (!supported) return null;
+
+  async function handleToggle() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      if (enabled) {
+        await disablePush();
+        setEnabled(false);
+        toast.success("Notificarile au fost dezactivate");
+      } else {
+        const r = await enablePush();
+        if (r.ok) {
+          setEnabled(true);
+          toast.success("Notificari activate. Vei primi un sumar zilnic la 09:00.");
+        } else {
+          toast.error(r.error || "Nu s-au putut activa notificarile");
+        }
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleToggle}
+      title={enabled ? "Notificari activate (apasa pentru a dezactiva)" : "Activeaza notificari zilnice"}
+      className="text-white/90 hover:text-white p-1 mr-1"
+      disabled={busy}
+    >
+      {enabled ? <Bell className="h-5 w-5" style={{ fill: "#fde68a" }} /> : <BellOff className="h-5 w-5" />}
+    </button>
+  );
+}
+
+function LogoutButton() {
+  const router = useRouter();
+  async function handleLogout() {
+    await fetch("/api/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  }
+  return (
+    <button
+      onClick={handleLogout}
+      title="Deconectare"
+      className="text-white/90 hover:text-white p-1 mr-1"
+    >
+      <LogOut className="h-5 w-5" />
+    </button>
   );
 }
 

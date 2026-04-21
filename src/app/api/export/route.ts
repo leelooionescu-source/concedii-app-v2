@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
       "Nr.": i + 1,
       "Prenume": a.prenume,
       "Nume": a.nume,
-      "Departament": a.departament || "",
       "Zile CO/an": a.zile_co_an,
       "CO consumat": co,
       "CO ramas": a.zile_co_an - co,

@@ -9,9 +9,7 @@ export const loginSchema = z.object({
 export const angajatSchema = z.object({
   nume: z.string().min(2, "Numele trebuie sa aiba minim 2 caractere").max(100, "Numele nu poate depasi 100 caractere"),
   prenume: z.string().min(2, "Prenumele trebuie sa aiba minim 2 caractere").max(100, "Prenumele nu poate depasi 100 caractere"),
-  departament: z.string().max(100, "Departamentul nu poate depasi 100 caractere").optional().or(z.literal("")),
   zile_co_an: z.number().min(1, "Minim 1 zi").max(50, "Maxim 50 zile"),
-  data_angajare: z.string().optional().or(z.literal("")),
   data_nastere: z.string().optional().or(z.literal("")),
   activ: z.boolean(),
 });

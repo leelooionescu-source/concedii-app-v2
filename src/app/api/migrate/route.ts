@@ -45,8 +45,6 @@ export async function GET() {
       const { data, error } = await supabase.from("angajati").insert({
         nume: a.nume || "",
         prenume: a.prenume || "",
-        departament: a.departament || "",
-        data_angajare: a.data_angajare || null,
         zile_co_an: a.zile_co_an || 21,
         activ: a.activ !== false,
       }).select("id").single();

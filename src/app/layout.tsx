@@ -9,13 +9,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Evidenta Concedii",
-  description: "Aplicatie pentru evidenta concediilor angajatilor",
+  title: "P&A Reloaded - Concedii",
+  description: "Evidenta concedii echipa PA",
   manifest: "/manifest.json",
+  icons: {
+    icon: [{ url: "/icon-192.png", sizes: "192x192" }, { url: "/icon-512.png", sizes: "512x512" }],
+    apple: "/apple-icon-180.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Concedii",
+    title: "P&A Concedii",
   },
 };
 
