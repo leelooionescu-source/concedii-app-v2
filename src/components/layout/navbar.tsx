@@ -23,7 +23,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center px-4 gap-1 shadow-md" style={{ backgroundColor: "#7B1FA2" }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center px-4 gap-1 shadow-md" style={{ backgroundColor: "#1E3A8A" }}>
         <Link href="/" className="flex items-center gap-2 mr-4 font-bold text-white text-sm shrink-0">
           <CalendarDays className="h-5 w-5" />
           Concedii
@@ -76,7 +76,7 @@ export function Navbar() {
       {menuOpen && (
         <div
           className="fixed top-12 left-0 right-0 z-40 shadow-lg md:hidden"
-          style={{ backgroundColor: "#7B1FA2" }}
+          style={{ backgroundColor: "#1E3A8A" }}
         >
           {navItems.map((item) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);

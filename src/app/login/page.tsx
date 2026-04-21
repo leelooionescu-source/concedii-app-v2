@@ -59,7 +59,7 @@ function LoginForm() {
         maxWidth: "380px",
         background: "white",
         borderRadius: "16px",
-        boxShadow: "0 10px 40px rgba(123, 31, 162, 0.12)",
+        boxShadow: "0 10px 40px rgba(30, 58, 138, 0.15)",
         padding: "32px 28px",
       }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "24px" }}>
@@ -67,7 +67,7 @@ function LoginForm() {
             width: "56px",
             height: "56px",
             borderRadius: "16px",
-            background: "linear-gradient(135deg, #7B1FA2 0%, #4527A0 100%)",
+            background: "linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -148,7 +148,7 @@ function LoginForm() {
               gap: "8px",
               width: "100%",
               padding: "11px",
-              background: "linear-gradient(135deg, #7B1FA2 0%, #4527A0 100%)",
+              background: "linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)",
               color: "white",
               border: "none",
               borderRadius: "8px",

@@ -4,8 +4,8 @@
   "description": "Aplicatie pentru evidenta concediilor echipa PA",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#eef3fb",
-  "theme_color": "#7B1FA2",
+  "background_color": "#eff6ff",
+  "theme_color": "#1E3A8A",
   "orientation": "portrait",
   "icons": [
     {
